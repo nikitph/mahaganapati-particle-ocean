@@ -94,7 +94,7 @@ impl Video for Field {
         for (i,p) in self.target.iter().enumerate() {
             let pos=Self::position(p,t);
             let settle=smooth(p.delay,p.delay+3.7,t);
-            
+
             let shade=(2.0+4.0*rnd(107,i as u32)) as usize;
             let col=if settle<0.66+0.30*rnd(307,i as u32){48+shade}else{p.palette};
             // Short exposure samples provide motion streaks following the real trajectory.
