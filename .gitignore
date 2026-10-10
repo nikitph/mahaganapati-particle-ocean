@@ -1,0 +1,15 @@
+/target/
+/.venv/
+/passes/
+/frames/
+/revised-frames/
+*.log
+/*.mp4
+/*.wav
+/*preview.png
+/progression.png
+/final-check.png
+.DS_Store
+__pycache__/
+.env
+.env.*

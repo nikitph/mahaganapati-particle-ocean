@@ -1,0 +1,16 @@
+[package]
+name = "ganesha-volume"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+fframes = { version = "=1.2.0", features = ["compile-time-svgtree", "cli", "h264", "libav-agree-gpl"] }
+fframes_skia_renderer = { version = "=1.2.0", features = ["metal"] }
+
+[[bin]]
+name = "field"
+path = "src/bin/field.rs"
+
+[[bin]]
+name = "cinema-lens"
+path = "src/bin/lens.rs"
