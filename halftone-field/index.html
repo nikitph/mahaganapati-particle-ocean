@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Halftone Field</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="One continuous system of 30,000 halftone particles that becomes a field, a terrain, an architecture, a word made of empty space, and the page layout itself.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one sticky full-bleed stage driven by scroll (the particle field), followed by a quiet printed reference sheet. */
+:root{
+  --paper:#E7EAEB;   /* cool newsprint */
+  --ink:#17202A;     /* process black, slightly blue */
+  --ink-2:#4B5661;
+  --rule:#C3CACE;
+  --accent:#C8246E;  /* process magenta, used only for threads, summit and the call to action */
+  --plate:#E7EAEB;
+  --f-display:"Archivo","Arial Black","Helvetica Neue",sans-serif;
+  --f-body:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1419; --ink:#D7DFE3; --ink-2:#8D9AA3; --rule:#28323A; --accent:#FF5AA5; --plate:#0E1419;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1419; --ink:#D7DFE3; --ink-2:#8D9AA3; --rule:#28323A; --accent:#FF5AA5; --plate:#0E1419;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:var(--f-body); font-size:16px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.skip{position:absolute; left:max(16px, env(safe-area-inset-left, 0px)); top:8px; z-index:50; transform:translateY(-200%);
+  background:var(--ink); color:var(--paper); padding:6px 10px; font:500 12px var(--f-mono)}
+.skip:focus{transform:none}
+
+/* ---------- Stage ---------- */
+.scrolly{position:relative; height:640vh}
+.stage{position:sticky; top:0; height:100vh; height:100svh; overflow:hidden; background:var(--paper)}
+#gl{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:pan-y}
+
+.eyebrow{font:500 11px/1.3 var(--f-mono); letter-spacing:.12em; text-transform:uppercase; color:var(--ink-2); display:flex; gap:.6em; align-items:center}
+.eyebrow b{font-weight:500; color:var(--accent)}
+.plate{background:var(--plate); padding:14px 18px 16px; display:flex; flex-direction:column; gap:8px}
+.plate p{margin:0; color:var(--ink-2); max-width:58ch}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; color:var(--ink)}
+h1{font-weight:900; font-stretch:118%; font-size:clamp(2rem,4.4vw,3.5rem); line-height:.98; letter-spacing:-.012em}
+.cap h2{font-weight:800; font-stretch:112%; font-size:clamp(1.3rem,2.3vw,1.9rem); line-height:1.05}
+
+.cap{position:absolute; opacity:0; pointer-events:none; will-change:opacity}
+.cap.on{pointer-events:auto}
+.cap0{left:max(16px, env(safe-area-inset-left, 0px), 5vw); top:50%; transform:translateY(-50%); width:min(34rem, calc(100% - 32px))}
+.cap0 .plate{padding:20px 22px 22px; gap:14px}
+.cap0 p{font-size:17px}
+.hint{font:500 12px var(--f-mono); color:var(--ink); letter-spacing:.06em; display:flex; align-items:center; gap:10px}
+.hint i{display:inline-block; width:1px; height:22px; background:var(--ink); animation:drop 1.8s ease-in-out infinite}
+@keyframes drop{0%,100%{transform:scaleY(.3); transform-origin:top}50%{transform:scaleY(1); transform-origin:top}}
+@media (prefers-reduced-motion: reduce){ .hint i{animation:none} }
+.cap1,.cap2{left:max(16px, env(safe-area-inset-left, 0px), 5vw); bottom:max(20px, 6vh); width:min(27rem, calc(100% - 32px))}
+.cap3{left:50%; transform:translateX(-50%); bottom:max(20px, 7vh); width:min(34rem, calc(100% - 32px)); text-align:center}
+.cap3 .plate{align-items:center}
+.cap3 .eyebrow{justify-content:center}
+
+.cap4{inset:0; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:clamp(18px,4vh,40px);
+  padding-block:64px 28px; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.cap4 .head{width:min(60rem,100%)}
+.cap4 .head .plate{display:inline-flex}
+.cards{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(28px,5vw,64px); width:min(60rem,100%)}
+.card{background:var(--plate); padding:14px 16px 16px; display:flex; flex-direction:column; gap:6px; min-width:0}
+.card h3{font-weight:800; font-stretch:110%; font-size:1.05rem; line-height:1.15}
+.card p{margin:0; color:var(--ink-2); font-size:14.5px; line-height:1.45}
+.card .eyebrow{font-size:10.5px}
+.cta{align-self:center; display:inline-flex; align-items:center; gap:12px; background:var(--plate); color:var(--ink);
+  border:1.5px solid var(--accent); padding:12px 20px; font:600 15px var(--f-body); text-decoration:none}
+.cta:hover{background:var(--accent); color:var(--paper)}
+.cta span{font-family:var(--f-mono); font-weight:400}
+
+.lbl{position:absolute; left:0; top:0; opacity:0; pointer-events:none; display:flex; align-items:center; gap:8px; white-space:nowrap}
+.lbl::before{content:""; width:28px; height:1px; background:var(--ink)}
+.lbl span{background:var(--plate); padding:3px 7px; font:500 11px/1.3 var(--f-mono); letter-spacing:.04em; color:var(--ink)}
+.lbl em{font-style:normal; color:var(--ink-2)}
+
+.hud{position:absolute; top:12px; right:max(16px, env(safe-area-inset-right, 0px)); background:var(--plate); padding:6px 10px;
+  font:400 11px/1.4 var(--f-mono); color:var(--ink-2); font-variant-numeric:tabular-nums; display:flex; gap:14px; letter-spacing:.03em}
+.hud b{color:var(--ink); font-weight:500}
+.nogl{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:min(28rem,calc(100% - 32px))}
+
+@media (max-width:720px){
+  .cards{grid-template-columns:1fr; gap:14px}
+  .card{padding:10px 12px 12px}
+  .card p{font-size:13.5px}
+  .cap4{justify-content:flex-start; padding-block:52px 18px; gap:16px}
+  .cap0{top:auto; bottom:max(18px,5vh); transform:none}
+  .cap0 p{font-size:15.5px}
+  .hud .opt{display:none}
+}
+
+/* ---------- Reference sheet ---------- */
+.sheet{position:relative; background:var(--paper); border-top:1px solid var(--rule);
+  padding-block:clamp(56px,9vw,112px) 64px; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.wrap{width:min(68rem,100%); margin:0 auto; display:flex; flex-direction:column; gap:clamp(48px,7vw,84px)}
+.sheet h2{font-weight:900; font-stretch:118%; font-size:clamp(1.8rem,3.6vw,2.8rem); line-height:1}
+.lede{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.3fr); gap:24px 48px; align-items:end}
+.lede p{margin:0; color:var(--ink-2); font-size:17px; max-width:56ch}
+.sec{display:flex; flex-direction:column; gap:18px}
+.sec h3{font-weight:800; font-stretch:110%; font-size:1.25rem}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse; width:100%; min-width:560px; font-size:15px}
+th,td{text-align:left; padding:12px 14px 12px 0; border-top:1px solid var(--rule); vertical-align:top}
+thead th{font:500 11px var(--f-mono); letter-spacing:.1em; text-transform:uppercase; color:var(--ink-2); border-top:none; padding-bottom:8px}
+td:first-child{font-weight:600; white-space:nowrap}
+td:nth-child(2){color:var(--ink-2)}
+.comps{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1px; background:var(--rule); border:1px solid var(--rule)}
+.comp{background:var(--paper); padding:16px; display:flex; flex-direction:column; gap:8px; min-width:0}
+.comp h4{margin:0; font:700 15px/1.25 var(--f-body)}
+.comp p{margin:0; font-size:14px; line-height:1.45; color:var(--ink-2)}
+.chip{align-self:flex-start; font:500 10.5px var(--f-mono); letter-spacing:.08em; text-transform:uppercase; padding:3px 7px; border:1px solid var(--rule); color:var(--ink-2)}
+.chip.built{border-color:var(--accent); color:var(--accent)}
+.steps{list-style:none; margin:0; padding:0; display:grid; gap:0; counter-reset:s}
+.steps li{counter-increment:s; display:grid; grid-template-columns:3rem minmax(0,1fr); gap:12px; padding:14px 0; border-top:1px solid var(--rule)}
+.steps li::before{content:counter(s); font:500 13px var(--f-mono); color:var(--ink-2); padding-top:2px}
+.steps li div{max-width:64ch}
+.steps code,.note code,td code,.plate code{font:13px var(--f-mono); background:color-mix(in srgb, var(--rule) 45%, transparent); padding:1px 4px}
+.note{color:var(--ink-2); font-size:15px; max-width:64ch; margin:0}
+footer{font:400 12px var(--f-mono); color:var(--ink-2); border-top:1px solid var(--rule); padding-top:16px}
+@media (max-width:860px){ .comps{grid-template-columns:repeat(2,minmax(0,1fr))} .lede{grid-template-columns:1fr} }
+@media (max-width:460px){ .comps{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#grammar">Skip to the grammar</a>
+
+<section class="scrolly" id="scrolly" aria-label="Particle sequence">
+  <div class="stage" id="stage">
+    <canvas id="gl" aria-hidden="true"></canvas>
+
+    <div class="cap cap0" data-s="0">
+      <div class="plate">
+        <div class="eyebrow">A rendering grammar for halftone particles</div>
+        <h1>One field of characters. Every image on this page.</h1>
+        <p>There is no hero image here. As you scroll, the same 30,000 characters become a landscape, an architecture, a word made of empty space, and finally the layout itself. Each one keeps flickering, but none is created or destroyed along the way.</p>
+        <div class="hint"><i></i>Scroll to reorganize the field</div>
+      </div>
+    </div>
+
+    <div class="cap cap1" data-s="1">
+      <div class="plate">
+        <div class="eyebrow">Field <span>→</span> Terrain</div>
+        <h2>The field rises into terrain.</h2>
+        <p>Glyph density encodes elevation: low ground is <code>.</code> and <code>:</code>, peaks are <code>#</code> and <code>@</code>. Glyphs on a contour line jump to the dense end, so the strata read as bands. The summit ring is printed in magenta.</p>
+      </div>
+    </div>
+
+    <div class="cap cap2" data-s="2">
+      <div class="plate">
+        <div class="eyebrow">Terrain <span>→</span> Architecture</div>
+        <h2>The landscape folds into the machine that draws it.</h2>
+        <p>Three layers, drawn by the characters they govern. Magenta threads trace the path a single glyph travels between targets.</p>
+      </div>
+    </div>
+
+    <div class="cap cap3" data-s="3">
+      <h2 class="sr-only">Field</h2>
+      <div class="plate">
+        <div class="eyebrow">Negative-space sculpture</div>
+        <p>Nothing draws these letters. Glyphs inside the strokes were pushed to the nearest edge, where they pile up and turn dense. Spacing records the compression.</p>
+      </div>
+    </div>
+
+    <div class="cap cap4" data-s="4">
+      <div class="head" data-mass="0.7">
+        <div class="plate">
+          <div class="eyebrow">Semantic gravity</div>
+          <h2>Characters gather where there is meaning.</h2>
+        </div>
+      </div>
+      <div class="cards">
+        <div class="card" data-mass="1">
+          <div class="eyebrow">Layer 1</div>
+          <h3>Persistent identity</h3>
+          <p>Each glyph keeps one ID from the first frame to the last. Continuity comes from identity, not from crossfades.</p>
+        </div>
+        <div class="card" data-mass="1">
+          <div class="eyebrow">Layer 2</div>
+          <h3>Target fields</h3>
+          <p>Every scene is a list of positions and sizes, one per glyph. A layout is just another field.</p>
+        </div>
+        <div class="card" data-mass="1">
+          <div class="eyebrow">Layer 3</div>
+          <h3>Interpolation</h3>
+          <p>The GPU blends field A into field B, each glyph on its own delay. Scroll sets the blend.</p>
+        </div>
+      </div>
+      <a class="cta" href="#grammar" data-mass="1.7" data-accent="1">Read the grammar <span>↓</span></a>
+    </div>
+
+    <div class="lbl" id="lbl2"><span>Interpolation <em>· mix A→B</em></span></div>
+    <div class="lbl" id="lbl1"><span>Target fields <em>· 5 × N</em></span></div>
+    <div class="lbl" id="lbl0"><span>Identity <em>· 30,000 IDs</em></span></div>
+
+    <div class="hud" aria-hidden="true">
+      <span><b id="hudState">Field</b></span>
+      <span>morph <b id="hudMorph">0.00</b></span>
+      <span class="opt">glyphs <b>30,000</b></span>
+      <span class="opt">screen <b>45°</b></span>
+    </div>
+  </div>
+</section>
+
+<section class="sheet" id="grammar">
+  <div class="wrap">
+    <div class="lede">
+      <h2>The grammar</h2>
+      <p>ASCII art is usually a filter. Here each character is a material: one glyph carries several channels at once, and a page is a sequence of fields the same glyphs pass through.</p>
+    </div>
+
+    <div class="sec">
+      <h3>Six channels per glyph</h3>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Channel</th><th>Encodes</th><th>Used on this page</th></tr></thead>
+          <tbody>
+            <tr><td>Position</td><td>Geometry and contours</td><td>Every scene is a target position field</td></tr>
+            <tr><td>Size</td><td>Intensity or depth</td><td>Picks the glyph from a density ramp <code>. : + * # @</code>: elevation, compression at letter edges, closeness to content</td></tr>
+            <tr><td>Spacing</td><td>Density and compression</td><td>Piles along letter edges, clusters around the cards</td></tr>
+            <tr><td>Orientation</td><td>Direction of movement</td><td>Moving glyphs become <code>- / | \</code> pointing along their path</td></tr>
+            <tr><td>Opacity</td><td>Uncertainty or disappearance</td><td>Every glyph flickers between opacities; far terrain and strays in empty space go faint</td></tr>
+            <tr><td>Motion</td><td>Transformation over time</td><td>Scroll drives the morph; glyphs re-roll on their own clocks</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3>Compositions</h3>
+      <div class="comps">
+        <div class="comp"><span class="chip built">Built here</span><h4>Negative-space sculpture</h4><p>The word exists only as dots displaced away from it.</p></div>
+        <div class="comp"><span class="chip built">Built here</span><h4>Topological metamorphosis</h4><p>Field to terrain to architecture to type, with one set of dots.</p></div>
+        <div class="comp"><span class="chip built">Built here</span><h4>Semantic gravity</h4><p>Dots cluster around content and thin out over empty space.</p></div>
+        <div class="comp"><span class="chip built">In the terrain</span><h4>Particle stratigraphy</h4><p>Contour bands mark levels; the next step is one band per moment in time.</p></div>
+        <div class="comp"><span class="chip">Next</span><h4>Particle caustics</h4><p>Dots concentrate into bright bands, like light refracted underwater.</p></div>
+        <div class="comp"><span class="chip">Next</span><h4>Recursive erosion</h4><p>Large dots split into smaller dots that organize into new contours.</p></div>
+        <div class="comp"><span class="chip">Next</span><h4>Impossible topography</h4><p>Contours fold through themselves into surfaces that cannot exist.</p></div>
+        <div class="comp"><span class="chip">Next</span><h4>Dimensional folding</h4><p>A flat dotted grid folds into apparent 3D with no surfaces drawn.</p></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3>How this page is built</h3>
+      <ol class="steps">
+        <li><div>Lay a 45° screen of N glyphs across the viewport. Each glyph gets a permanent ID and a delay that sweeps left to right.</div></li>
+        <li><div>Build each scene as a target field: N positions plus N sizes. Terrain and architecture are 3D; the field, the letters and the layout are flat and map one-to-one onto screen pixels.</div></li>
+        <li><div>Match IDs to targets by strip-sorting both sets in screen space, so neighbours stay neighbours and the morph reads as one material moving.</div></li>
+        <li><div>Interleave all five fields into one buffer: six <code>vec4</code> attributes per glyph, uploaded once (and again on resize).</div></li>
+        <li><div>In the vertex shader, mix field A into field B with a smoothstep per glyph. The blended size picks a character from the ramp, a hash of ID and time re-rolls it, and the fragment shader samples one 32-glyph atlas.</div></li>
+      </ol>
+      <p class="note">This prototype runs on WebGL 1 so it works almost everywhere. With WebGPU, the target fields could be generated in compute shaders instead of JavaScript, which removes the resize cost and lets the field grow past a million dots.</p>
+    </div>
+
+    <footer>Halftone Field · 30,000 glyphs · 5 target fields · one continuous system</footer>
+  </div>
+</section>
+
+<script>
+(() => {
+  "use strict";
+  const N = 30000;
+  const STATES = ["Field","Terrain","Architecture","Letterform","Gravity"];
+  const D = 3.6, PITCH = 0.82, YAW0 = -0.62;
+  const stage = document.getElementById("stage");
+  const scrolly = document.getElementById("scrolly");
+  const canvas = document.getElementById("gl");
+  const caps = [...document.querySelectorAll(".cap")];
+  const lbls = [0,1,2].map(i => document.getElementById("lbl"+i));
+  const hudState = document.getElementById("hudState");
+  const hudMorph = document.getElementById("hudMorph");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const gl = canvas.getContext("webgl", {alpha:false, antialias:false, premultipliedAlpha:false});
+  if (!gl) {
+    const d = document.createElement("div");
+    d.className = "nogl plate";
+    d.innerHTML = "<div class='eyebrow'>WebGL unavailable</div><p>This browser could not start WebGL, so the particle field cannot render. The captions and the grammar below still read in order.</p>";
+    stage.appendChild(d);
+    caps.forEach(c => { c.style.opacity = 1; c.style.position = "relative"; });
+    return;
+  }
+
+  /* ---------- shaders ---------- */
+  const VS = `
+  attribute vec4 aS0,aS1,aS2,aS3,aS4,aR;
+  uniform float uT,uTime,uAspect,uPx,uD,uPitch,uYaw,uCalm,uMouseOn;
+  uniform vec2 uMouse,uOff;
+  varying float vAlpha,vAcc,vG;
+  vec4 st(float k){ if(k<0.5) return aS0; if(k<1.5) return aS1; if(k<2.5) return aS2; if(k<3.5) return aS3; return aS4; }
+  float is3(float k){ return (k>0.5 && k<2.5) ? 1.0 : 0.0; }
+  float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233)))*43758.5453); }
+  void main(){
+    float i = clamp(floor(uT),0.0,3.0);
+    float f = clamp(uT-i,0.0,1.0);
+    vec4 A = st(i); vec4 B = st(i+1.0);
+    float lt = clamp((f - aR.x*0.45)/0.55, 0.0, 1.0);
+    lt = lt*lt*(3.0-2.0*lt);
+    float m = 4.0*lt*(1.0-lt);
+    vec3 p = mix(A.xyz, B.xyz, lt);
+    float ph = aR.y*6.2831;
+    vec3 sw = vec3(sin(ph+uTime*0.9+p.y*4.0), cos(aR.z*6.2831+uTime*0.8+p.x*4.0), sin(ph*1.7+uTime*0.7));
+    p += sw*m*0.07*uCalm;
+    p.xy += 0.0022*uCalm*vec2(sin(uTime*0.6+ph), cos(uTime*0.5+ph*1.3));
+    float k = mix(is3(i), is3(i+1.0), lt);
+    float yaw = k*uYaw, pit = k*uPitch;
+    float cy=cos(yaw), sy=sin(yaw);
+    p = vec3(cy*p.x + sy*p.z, p.y, -sy*p.x + cy*p.z);
+    float cp=cos(pit), sp=sin(pit);
+    p = vec3(p.x, cp*p.y - sp*p.z, sp*p.y + cp*p.z);
+    float w = uD/(uD - p.z);
+    vec2 sc = p.xy*w + uOff*k;
+    vec2 dm = sc - uMouse; float r2 = dot(dm,dm);
+    sc += dm/(sqrt(r2)+1e-4) * 0.085*exp(-r2/0.014)*uMouseOn;
+    gl_Position = vec4(sc.x/uAspect, sc.y, 0.0, 1.0);
+    float s = mix(abs(A.w), abs(B.w), lt);
+    vAcc = mix(A.w<0.0?1.0:0.0, B.w<0.0?1.0:0.0, lt);
+
+    // glyph choice: density ramp from the size channel, re-rolled on a per-glyph clock
+    float dn = clamp((s-0.08)/0.8, 0.0, 1.0);
+    float tick = floor(uTime*(1.2+aR.z*5.0) + aR.y*17.0);
+    float h1 = hash(vec2(aR.w*977.0+0.13, tick));
+    float h2 = hash(vec2(aR.w*331.0+3.7, tick));
+    float h3 = hash(vec2(aR.w*53.0+9.1, tick+0.5));
+    float g = clamp(floor(dn*11.0 + 0.5 + (h1-0.5)*2.0*uCalm), 0.0, 11.0);
+    if (h2 > 0.94 && uCalm > 0.5) g = 16.0 + floor(hash(vec2(tick, aR.w*51.0))*16.0);
+    vec2 d = B.xy - A.xy; float dl = length(d);
+    if (dl*m*2.6*uCalm > 0.35){
+      float a = mod(atan(d.y, d.x), 3.14159265);
+      g = 12.0 + mod(floor(a/3.14159265*4.0 + 0.5), 4.0);   // directional glyphs along the path
+    }
+    vG = g;
+    gl_PointSize = s > 0.0 ? uPx*w*(1.05 + 0.3*dn) : 0.0;
+    vAlpha = clamp(0.3 + s*1.1, 0.0, 1.0)
+           * mix(1.0, clamp(0.3 + (w-0.82)*1.3, 0.3, 1.0), k)
+           * (0.3 + 0.7*h3);
+  }`;
+  const FS = `
+  precision mediump float;
+  uniform sampler2D uAtlas;
+  uniform vec3 uInk, uAcc;
+  varying float vAlpha,vAcc,vG;
+  void main(){
+    float g = floor(vG + 0.5);
+    float a = texture2D(uAtlas, vec2((g + gl_PointCoord.x)/32.0, gl_PointCoord.y)).a;
+    if (a*vAlpha < 0.02) discard;
+    gl_FragColor = vec4(mix(uInk, uAcc, vAcc), a*vAlpha);
+  }`;
+  function sh(type, src){ const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+    if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s)); return s; }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS));
+  gl.linkProgram(prog); gl.useProgram(prog);
+  const U = {}; ["uT","uTime","uAspect","uPx","uD","uPitch","uYaw","uCalm","uMouseOn","uMouse","uOff","uInk","uAcc","uAtlas"].forEach(n => U[n] = gl.getUniformLocation(prog, n));
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  ["aS0","aS1","aS2","aS3","aS4","aR"].forEach((n, j) => {
+    const loc = gl.getAttribLocation(prog, n);
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 4, gl.FLOAT, false, 96, j*16);
+  });
+  gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+  /* ---------- glyph atlas: 32 cells of 64px ---------- */
+  // 0-11 density ramp, 12-15 direction of travel, 16-31 flicker glyphs
+  const GLYPHS = [".",",",":",";","-","=","+","*","x","#","%","@", "-","/","|","\\", ..."0123456789abcdef"];
+  const tex = gl.createTexture();
+  function buildAtlas(){
+    const c = document.createElement("canvas"); c.width = 2048; c.height = 64;
+    const x = c.getContext("2d");
+    x.fillStyle = "#fff"; x.textAlign = "center"; x.textBaseline = "middle";
+    x.font = '500 46px "JetBrains Mono", ui-monospace, Menlo, monospace';
+    GLYPHS.forEach((ch, i) => x.fillText(ch, i*64 + 32, 34));
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.uniform1i(U.uAtlas, 0);
+  }
+  buildAtlas();
+
+  /* ---------- colours from tokens ---------- */
+  let colPaper=[1,1,1], colInk=[0,0,0], colAcc=[1,0,.5];
+  function hex(v){ v = v.trim().replace("#",""); if(v.length===3) v=v.split("").map(c=>c+c).join("");
+    const n = parseInt(v,16); return [(n>>16&255)/255,(n>>8&255)/255,(n&255)/255]; }
+  function readColors(){ const cs = getComputedStyle(document.documentElement);
+    try{ colPaper = hex(cs.getPropertyValue("--paper")); colInk = hex(cs.getPropertyValue("--ink")); colAcc = hex(cs.getPropertyValue("--accent")); }catch(e){} }
+  readColors();
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", readColors);
+  new MutationObserver(readColors).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+
+  /* ---------- helpers ---------- */
+  function rng(seed){ return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const C45 = Math.SQRT1_2;
+  function stripOrder(kx, ky){
+    const n = kx.length, idx = new Uint32Array(n);
+    for(let i=0;i<n;i++) idx[i]=i;
+    idx.sort((a,b) => kx[a]-kx[b]);
+    const C = Math.round(Math.sqrt(n)), per = Math.ceil(n/C);
+    for(let c=0;c<C;c++){
+      const s = c*per, e = Math.min(n, s+per); if (s>=e) break;
+      const sub = idx.subarray(s,e);
+      if (c%2===0) sub.sort((a,b)=>ky[a]-ky[b]); else sub.sort((a,b)=>ky[b]-ky[a]);
+    }
+    return idx;
+  }
+  function keysFromScreen(sx, sy){ // rotate -45° into the screen-lattice frame
+    const n = sx.length, kx = new Float32Array(n), ky = new Float32Array(n);
+    for(let i=0;i<n;i++){ kx[i] = (sx[i]+sy[i])*C45; ky[i] = (sy[i]-sx[i])*C45; }
+    return [kx, ky];
+  }
+  let W=0, H=0, A=1, OFF=[0,0];
+  function project(x,y,z,yaw){
+    const cy=Math.cos(yaw), sy=Math.sin(yaw);
+    const X=cy*x+sy*z, Z=-sy*x+cy*z;
+    const cp=Math.cos(PITCH), sp=Math.sin(PITCH);
+    const Y2=cp*y-sp*Z, Z2=sp*y+cp*Z;
+    const w=D/(D-Z2);
+    return [X*w+OFF[0], Y2*w+OFF[1], w];
+  }
+
+  const F = new Float32Array(N*24);
+  let refOrder = null;
+  function writeState(s, tx, ty, tz, ts, kx, ky){
+    const to = stripOrder(kx, ky);
+    for(let k=0;k<N;k++){ const p = refOrder[k], t = to[k], o = p*24 + s*4;
+      F[o]=tx[t]; F[o+1]=ty[t]; F[o+2]=tz[t]; F[o+3]=ts[t]; }
+  }
+
+  /* ---------- build all target fields ---------- */
+  let SC = 1, archAnchors = [];
+  function build(){
+    const R = rng(7);
+    A = W/H;
+    OFF = A > 1.15 ? [A*0.24, 0.02] : (A < 0.9 ? [0, 0.22] : [0, 0.1]);
+    SC = Math.min(1, A*0.82);
+    const sx = new Float32Array(N), sy = new Float32Array(N), sz = new Float32Array(N), ss = new Float32Array(N);
+
+    // ---- S0: 45° halftone lattice ----
+    let sw = Math.sqrt(4*A/N), pts = [];
+    for(let it=0; it<8; it++){
+      pts = [];
+      const K = Math.ceil(Math.sqrt(A*A+1)/sw)+1;
+      for(let u=-K;u<=K;u++) for(let v=-K;v<=K;v++){
+        const x=(u-v)*sw*C45, y=(u+v)*sw*C45;
+        if (Math.abs(x)<=A && Math.abs(y)<=1) pts.push(x,y);
+      }
+      const M = pts.length/2; if (M<=N) break;
+      sw *= Math.sqrt(M/N)*1.003;
+    }
+    const M = pts.length/2;
+    const base = new Float32Array(N*2), live = new Uint8Array(N);
+    for(let i=0;i<N;i++){
+      const j = i<M ? i : Math.floor(R()*M);
+      base[i*2]=pts[j*2]; base[i*2+1]=pts[j*2+1]; live[i] = i<M ? 1 : 0;
+    }
+    const spacingPx = sw*H/2;
+    for(let i=0;i<N;i++){
+      const x=base[i*2], y=base[i*2+1];
+      F[i*24]=x; F[i*24+1]=y; F[i*24+2]=0;
+      F[i*24+3] = live[i] ? 0.44 + 0.07*Math.sin(x*2.3+0.4)*Math.cos(y*1.9) : 0;
+      // per-dot randoms: delay sweeps left to right
+      F[i*24+20] = 0.62*((x/A+1)/2) + 0.38*R(); F[i*24+21]=R(); F[i*24+22]=R(); F[i*24+23]=i/N;
+      sx[i]=x; sy[i]=y;
+    }
+    let [kx, ky] = keysFromScreen(sx, sy);
+    refOrder = stripOrder(kx, ky);
+
+    // ---- S1: terrain with contour strata ----
+    const hx = 1.38*SC, hz = 1.02*SC;
+    const nx = Math.ceil(Math.sqrt(N*hx/hz)), nz = Math.ceil(N/nx);
+    const hfun = (x,z) => {
+      x/=SC; z/=SC;
+      let h = 0.42*Math.exp(-((x-0.32)**2+(z+0.18)**2)/0.2)
+            + 0.26*Math.exp(-((x+0.62)**2+(z-0.35)**2)/0.12)
+            + 0.18*Math.exp(-((x+0.1)**2+(z-0.62)**2)/0.06)
+            + 0.045*Math.sin(x*4.1+1.0)*Math.cos(z*3.3)
+            + 0.02*Math.sin(x*9.0+z*7.0);
+      return h*SC;
+    };
+    let hmin=1e9, hmax=-1e9; const H1 = new Float32Array(N);
+    for(let i=0;i<N;i++){
+      const gx=i%nx, gz=Math.floor(i/nx);
+      const x = -hx + (gx+0.5)*(2*hx/nx) + (R()-0.5)*0.002;
+      const z = -hz + (gz+0.5)*(2*hz/nz);
+      const h = hfun(x,z); H1[i]=h; hmin=Math.min(hmin,h); hmax=Math.max(hmax,h);
+      sx[i]=x; sz[i]=z;
+    }
+    for(let i=0;i<N;i++){
+      const hn = (H1[i]-hmin)/(hmax-hmin);
+      const c = Math.abs(((hn*9)%1)-0.5)*2;            // 1 on a contour level
+      const band = Math.max(0, (c-0.8)/0.2);
+      let s = 0.2 + 0.42*hn + 0.42*band;
+      if (hn > 0.86 && band > 0.3) s = -s;           // summit ring in accent
+      sy[i] = H1[i] - 0.06*SC; ss[i] = s;
+    }
+    { const px = new Float32Array(N), py = new Float32Array(N);
+      for(let i=0;i<N;i++){ const p = project(sx[i],sy[i],sz[i],YAW0); px[i]=p[0]; py[i]=p[1]; }
+      [kx,ky] = keysFromScreen(px,py); writeState(1, sx, sy, sz, ss, kx, ky); }
+
+    // ---- S2: architecture: three layers, columns, threads ----
+    const L = [{y:-0.56,hw:0.82,hd:0.6},{y:0,hw:0.72,hd:0.52},{y:0.56,hw:0.62,hd:0.45}].map(l => ({y:l.y*SC,hw:l.hw*SC,hd:l.hd*SC}));
+    archAnchors = L.map(l => [l.hw, l.y, l.hd]);
+    let n = 0;
+    const put = (x,y,z,s) => { if(n<N){ sx[n]=x; sy[n]=y; sz[n]=z; ss[n]=s; n++; } };
+    const perim = (l, t) => { const P = 4*(l.hw+l.hd); let d = t*P*0.5*2;
+      const a = 2*l.hw, b = 2*l.hd;
+      if (d < a) return [-l.hw+d, -l.hd]; d-=a; if (d < b) return [l.hw, -l.hd+d]; d-=b;
+      if (d < a) return [l.hw-d, l.hd]; d-=a; return [-l.hw, l.hd-d]; };
+    const nSlab = Math.floor(N*0.22);
+    L.forEach(l => {
+      for(let j=0;j<nSlab;j++){
+        const r = R();
+        if (r < 0.3) { const [x,z] = perim(l, R()); put(x, l.y + (R()<0.5?0:-0.035*SC), z, 0.62 + R()*0.1); }
+        else if (r < 0.55) { // module lines 3 x 2
+          if (R()<0.5){ const gx = -l.hw + (1+Math.floor(R()*2))*(2*l.hw/3); put(gx, l.y, -l.hd+R()*2*l.hd, 0.42); }
+          else { put(-l.hw+R()*2*l.hw, l.y, 0, 0.42); }
+        } else put(-l.hw+R()*2*l.hw, l.y, -l.hd+R()*2*l.hd, 0.16+R()*0.12);
+      }
+    });
+    const nCol = Math.floor(N*0.15);
+    for(let j=0;j<nCol;j++){
+      const k = R()<0.5 ? 0 : 1, lo = L[k], hi = L[k+1];
+      const corner = Math.floor(R()*5);
+      const cx = corner===4 ? 0 : (corner%2 ? 1 : -1)*hi.hw*0.92, cz = corner===4 ? 0 : (corner<2 ? 1 : -1)*hi.hd*0.92;
+      const a = R()*6.283, rr = 0.012*SC*Math.sqrt(R());
+      put(cx+Math.cos(a)*rr, lo.y + R()*(hi.y-lo.y), cz+Math.sin(a)*rr, 0.5);
+    }
+    const nThr = Math.floor(N*0.09), threads = [];
+    for(let t=0;t<7;t++) threads.push(L.map(l => [(R()*1.6-0.8)*l.hw, l.y, (R()*1.6-0.8)*l.hd]));
+    for(let j=0;j<nThr;j++){
+      const th = threads[j%7], u = R()*2, seg = Math.min(1, Math.floor(u)), f = u-seg;
+      const a = th[seg], b = th[seg+1], e = f*f*(3-2*f);
+      put(a[0]+(b[0]-a[0])*e, a[1]+(b[1]-a[1])*f, a[2]+(b[2]-a[2])*e, -(0.42+R()*0.12));
+    }
+    while(n<N){ const a = R()*6.283, r = (1.05 + R()*0.35)*SC; put(Math.cos(a)*r*1.1, -0.86*SC, Math.sin(a)*r*0.8, 0.1+R()*0.08); }
+    { const px = new Float32Array(N), py = new Float32Array(N);
+      for(let i=0;i<N;i++){ const p = project(sx[i],sy[i],sz[i],YAW0); px[i]=p[0]; py[i]=p[1]; }
+      [kx,ky] = keysFromScreen(px,py); writeState(2, sx, sy, sz, ss, kx, ky); }
+
+    // ---- S3: negative-space letterform ----
+    buildLetters(base, live, sx, sy, sz, ss, R);
+    [kx,ky] = keysFromScreen(sx, sy); writeState(3, sx, sy, sz, ss, kx, ky);
+
+    // ---- S4: semantic gravity around real layout ----
+    buildGravity(sx, sy, sz, ss, R);
+    [kx,ky] = keysFromScreen(sx, sy); writeState(4, sx, sy, sz, ss, kx, ky);
+
+    gl.bufferData(gl.ARRAY_BUFFER, F, gl.STATIC_DRAW);
+    gl.uniform1f(U.uPx, spacingPx * dpr);
+  }
+
+  function buildLetters(base, live, sx, sy, sz, ss, R){
+    const ms = 0.5, mw = Math.max(2, Math.round(W*ms)), mh = Math.max(2, Math.round(H*ms));
+    const cv = document.createElement("canvas"); cv.width = mw; cv.height = mh;
+    const cx = cv.getContext("2d", {willReadFrequently:true});
+    const word = "FIELD";
+    const fam = '"Archivo","Arial Black",sans-serif';
+    try { cx.fontStretch = "expanded"; } catch(e){}
+    cx.font = `900 100px ${fam}`;
+    const wr = cx.measureText(word).width / 100;
+    const fs = Math.min(H*0.34, (W*0.88)/wr) * ms;
+    cx.font = `900 ${fs}px ${fam}`;
+    cx.textAlign = "center"; cx.textBaseline = "middle"; cx.fillStyle = "#000";
+    const cyText = (A < 0.9 ? 0.36 : 0.44) * mh;
+    cx.fillText(word, mw/2, cyText);
+    const img = cx.getImageData(0,0,mw,mh).data;
+    const Mk = new Float32Array(mw*mh);
+    for(let i=0;i<mw*mh;i++) Mk[i] = img[i*4+3]/255;
+    // blurred copy for gradients
+    const Bl = Float32Array.from(Mk), tmp = new Float32Array(mw*mh);
+    const r = Math.max(3, Math.round(fs*0.09));
+    for(let pass=0; pass<2; pass++){
+      for(let y=0;y<mh;y++){ let acc=0; const row=y*mw;
+        for(let x=-r;x<=r;x++) acc += Bl[row+Math.min(mw-1,Math.max(0,x))];
+        for(let x=0;x<mw;x++){ tmp[row+x]=acc/(2*r+1);
+          acc += Bl[row+Math.min(mw-1,x+r+1)] - Bl[row+Math.max(0,x-r)]; } }
+      for(let x=0;x<mw;x++){ let acc=0;
+        for(let y=-r;y<=r;y++) acc += tmp[Math.min(mh-1,Math.max(0,y))*mw+x];
+        for(let y=0;y<mh;y++){ Bl[y*mw+x]=acc/(2*r+1);
+          acc += tmp[Math.min(mh-1,y+r+1)*mw+x] - tmp[Math.max(0,y-r)*mw+x]; } }
+    }
+    const S = (arr,x,y) => arr[Math.min(mh-1,Math.max(0,y|0))*mw + Math.min(mw-1,Math.max(0,x|0))];
+    for(let i=0;i<N;i++){
+      let X = (base[i*2]/A+1)/2*mw, Y = (1-base[i*2+1])/2*mh;
+      let s = live[i] ? 0.44 : 0;
+      if (S(Mk,X,Y) > 0.5){
+        let gx=0, gy=0, steps=0;
+        while(S(Mk,X,Y) > 0.5 && steps < 500){
+          gx = S(Bl,X+1,Y)-S(Bl,X-1,Y); gy = S(Bl,X,Y+1)-S(Bl,X,Y-1);
+          let l = Math.hypot(gx,gy); if (l < 1e-6){ const a=R()*6.283; gx=Math.cos(a); gy=Math.sin(a); l=1; }
+          X -= gx/l*0.6; Y -= gy/l*0.6; steps++;
+        }
+        const l = Math.hypot(gx,gy)||1, push = 0.4 + R()*1.6;
+        X -= gx/l*push; Y -= gy/l*push;
+        if (live[i]) s = 0.6 + R()*0.22;
+      } else {
+        const b = S(Bl,X,Y);
+        if (b > 0.01){
+          const gx = S(Bl,X+1,Y)-S(Bl,X-1,Y), gy = S(Bl,X,Y+1)-S(Bl,X,Y-1), l = Math.hypot(gx,gy)||1;
+          X -= gx/l*b*2.2; Y -= gy/l*b*2.2;
+          if (live[i]) s = 0.44 + b*0.3;
+        }
+      }
+      sx[i] = (X/mw*2-1)*A; sy[i] = 1 - Y/mh*2; sz[i] = 0; ss[i] = s;
+    }
+  }
+
+  function buildGravity(sx, sy, sz, ss, R){
+    const sr = stage.getBoundingClientRect();
+    const els = [...document.querySelectorAll(".cap4 [data-mass]")].map(el => {
+      const r = el.getBoundingClientRect();
+      const rr = { x:r.left-sr.left, y:r.top-sr.top, w:r.width, h:r.height };
+      const wt = parseFloat(el.dataset.mass) * 2*(rr.w+rr.h);
+      return {...rr, wt, acc: el.dataset.accent === "1"};
+    }).filter(e => e.w > 0 && e.h > 0);
+    const total = els.reduce((a,e)=>a+e.wt,0);
+    const nC = Math.floor(N*0.84);
+    const toW = (px,py) => [(px/W*2-1)*A, 1 - py/H*2];
+    for(let i=0;i<N;i++){
+      if (i < nC && total > 0){
+        let pick = R()*total, e = els[0];
+        for(const c of els){ pick -= c.wt; if (pick <= 0){ e = c; break; } }
+        const P = 2*(e.w+e.h); let t = R()*P, x, y, nx, ny;
+        if (t < e.w){ x=e.x+t; y=e.y; nx=0; ny=-1; }
+        else if ((t-=e.w) < e.h){ x=e.x+e.w; y=e.y+t; nx=1; ny=0; }
+        else if ((t-=e.h) < e.w){ x=e.x+e.w-t; y=e.y+e.h; nx=0; ny=1; }
+        else { t-=e.w; x=e.x; y=e.y+e.h-t; nx=-1; ny=0; }
+        const g = Math.abs((R()+R()+R()-1.5)) * 26;
+        const d = 3 + g;
+        x += nx*d + (R()-0.5)*2; y += ny*d + (R()-0.5)*2;
+        const [wx, wy] = toW(x, y);
+        let s = 0.2 + 0.62*Math.exp(-d/12);
+        if (e.acc) s = -s;
+        sx[i]=wx; sy[i]=wy; sz[i]=0; ss[i]=s;
+      } else {
+        const [wx, wy] = toW(R()*W, R()*H);
+        sx[i]=wx; sy[i]=wy; sz[i]=0; ss[i]=0.1 + R()*0.1;
+      }
+    }
+  }
+
+  /* ---------- sizing ---------- */
+  let dpr = 1;
+  function resize(){
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = stage.clientWidth; H = stage.clientHeight;
+    canvas.width = Math.round(W*dpr); canvas.height = Math.round(H*dpr);
+    gl.viewport(0,0,canvas.width,canvas.height);
+    build();
+  }
+  let lastW = 0, lastH = 0, rt = 0;
+  window.addEventListener("resize", () => {
+    clearTimeout(rt);
+    rt = setTimeout(() => {
+      const w = stage.clientWidth, h = stage.clientHeight;
+      if (w !== lastW || Math.abs(h-lastH) > lastH*0.12){ lastW = w; lastH = h; resize(); }
+    }, 180);
+  });
+
+  /* ---------- pointer ---------- */
+  let mouse = [9,9], mouseOn = 0, mouseTarget = 0;
+  stage.addEventListener("pointermove", e => {
+    if (e.pointerType !== "mouse") return;
+    const r = stage.getBoundingClientRect();
+    mouse = [((e.clientX-r.left)/W*2-1)*A, 1-(e.clientY-r.top)/H*2]; mouseTarget = reduce ? 0 : 1;
+  });
+  stage.addEventListener("pointerleave", () => mouseTarget = 0);
+
+  /* ---------- loop ---------- */
+  let T = 0, last = performance.now(), t0 = last;
+  function scrollT(){
+    const r = scrolly.getBoundingClientRect();
+    const total = r.height - H;
+    const p = Math.min(1, Math.max(0, -r.top/Math.max(1,total)));
+    const u = p*4, i = Math.min(3, Math.floor(u)), f = u - i;
+    const e = Math.min(1, Math.max(0, (f-0.28)/0.62));
+    return i + e*e*(3-2*e);
+  }
+  function frame(now){
+    requestAnimationFrame(frame);
+    const dt = Math.min(0.05, (now-last)/1000); last = now;
+    const time = (now - t0)/1000;
+    const r = scrolly.getBoundingClientRect();
+    if (r.bottom < 0) return;
+    const target = scrollT();
+    T += (target - T) * Math.min(1, dt*(reduce ? 20 : 5));
+    if (Math.abs(target-T) < 1e-4) T = target;
+    mouseOn += (mouseTarget - mouseOn) * Math.min(1, dt*6);
+
+    const yaw = YAW0 + (reduce ? 0 : Math.sin(time*0.12)*0.2);
+    gl.clearColor(colPaper[0], colPaper[1], colPaper[2], 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform1f(U.uT, T); gl.uniform1f(U.uTime, reduce ? 0 : time);
+    gl.uniform1f(U.uAspect, A); gl.uniform1f(U.uD, D);
+    gl.uniform1f(U.uPitch, PITCH); gl.uniform1f(U.uYaw, yaw);
+    gl.uniform1f(U.uCalm, reduce ? 0 : 1); gl.uniform1f(U.uMouseOn, mouseOn);
+    gl.uniform2f(U.uMouse, mouse[0], mouse[1]); gl.uniform2f(U.uOff, OFF[0], OFF[1]);
+    gl.uniform3fv(U.uInk, colInk); gl.uniform3fv(U.uAcc, colAcc);
+    gl.drawArrays(gl.POINTS, 0, N);
+
+    // captions
+    caps.forEach((c, i) => {
+      const o = 1 - Math.min(1, Math.max(0, (Math.abs(T - i) - 0.1)/0.3));
+      c.style.opacity = o.toFixed(3);
+      c.classList.toggle("on", o > 0.6);
+      c.setAttribute("aria-hidden", o < 0.5 ? "true" : "false");
+    });
+    // architecture labels follow the projected layers
+    const lo = 1 - Math.min(1, Math.max(0, (Math.abs(T - 2) - 0.08)/0.22));
+    archAnchors.forEach((a, i) => {
+      const p = project(a[0], a[1], a[2]*0.0, yaw);
+      const px = (p[0]/A+1)/2*W + 8, py = (1-p[1])/2*H;
+      const el = lbls[i];
+      const fits = px + 170 < W;
+      el.style.opacity = fits ? lo.toFixed(3) : 0;
+      el.style.transform = `translate(${px.toFixed(1)}px, ${(py-10).toFixed(1)}px)`;
+    });
+    const i = Math.min(3, Math.floor(T)), f = T - i;
+    hudState.textContent = f < 0.02 ? STATES[i] : (f > 0.98 ? STATES[i+1] : STATES[i] + " → " + STATES[i+1]);
+    hudMorph.textContent = (f > 0.98 ? 0 : f).toFixed(2);
+  }
+
+  const ready = (document.fonts && document.fonts.load)
+    ? Promise.race([document.fonts.load('900 100px "Archivo"'), new Promise(r => setTimeout(r, 1500))])
+    : Promise.resolve();
+  // render the field immediately, then rebuild once the display face is in
+  lastW = stage.clientWidth; lastH = stage.clientHeight;
+  resize();
+  requestAnimationFrame(frame);
+  if (document.fonts && document.fonts.load)
+    Promise.race([document.fonts.load('500 46px "JetBrains Mono"'), new Promise(r => setTimeout(r, 1500))]).then(buildAtlas).catch(()=>{});
+  ready.then(() => { if (document.fonts && document.fonts.check && document.fonts.check('900 100px "Archivo"')) build(); }).catch(()=>{});
+})();
+</script>
+</body>
+</html>
